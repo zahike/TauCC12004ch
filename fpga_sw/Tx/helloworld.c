@@ -81,12 +81,11 @@ int main()
 {
 	int freq;
 	int Hdata,Ldata,CamID;
-	int loop0,loop1,loop2,loop3;
-	int Data;
-	int data0,data1,data2,data3;
+	int loop;
+	int Data,data;
 	int Add1,Add2;
 	int pll = 0;
-	int Sel = 1;
+	int Sel = 0;
     init_platform();
 
     xil_printf("Hello World\n\r");
@@ -94,99 +93,48 @@ int main()
 
 	xil_printf("===== Set Up Transmitter =====\n\r");
     xil_printf("Reset CC1200\n\r");
-    ResetCC1200(0);
-    ResetCC1200(1);
-    ResetCC1200(2);
-    ResetCC1200(3);
+    ResetCC1200(Sel);
 
     xil_printf("Configure CC1200\n\r");
-    TxCC1200_init(0, Tx_Pkt_size);
-    TxCC1200_init(1, Tx_Pkt_size);
-	writeLCC120(1, 0x2F0C,   0x5B);
-	writeLCC120(1, 0x2F0D,   0x80);
-    TxCC1200_init(2, Tx_Pkt_size);
-   	writeSCC120(2, 0x0020,   0x14);
-	writeLCC120(2, 0x2F0C,   0x5E);
-	writeLCC120(2, 0x2F0D,   0x00);
-    TxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3, 0x2F0C,   0x5B);
-	writeLCC120(3, 0x2F0D,   0x00);
+    TxCC1200_init(Sel, Tx_Pkt_size);
+	writeLCC120(Sel , 0x2F0C,   0x5A);// freq915
+	writeLCC120(Sel , 0x2F0D,   0x80);
 
-
-    CC1200[0x100*0+4] = 4;        // switch to command mode
-    CC1200[0x100*1+4] = 4;        // switch to command mode
-    CC1200[0x100*2+4] = 4;        // switch to command mode
-    CC1200[0x100*3+4] = 4;        // switch to command mode
+    CC1200[0x100*Sel+4] = 4;        // switch to command mode
     xil_printf("set chip to Tx\n\r");
-    CC1200[0x100*0+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*1+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*2+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*3+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*0+0] = 1;
-    CC1200[0x100*1+0] = 1;
-    CC1200[0x100*2+0] = 1;
-    CC1200[0x100*3+0] = 1;
-	loop0 = 1;
-	loop1 = 1;
-	loop2 = 1;
-	loop3 = 1;
-	while (loop0 || loop1 || loop2 || loop3)
+    CC1200[0x100*Sel+2] = 0x350000; // set chip to Tx
+    CC1200[0x100*Sel+0] = 1;
+	loop = 1;
+	while (loop)
 	{
-		loop0 = CC1200[0x100*0+1];
-		loop1 = CC1200[0x100*1+1];
-		loop2 = CC1200[0x100*2+1];
-		loop3 = CC1200[0x100*3+1];
+		loop = CC1200[0x100*Sel+1];
 	};
 
-    CC1200[0x100*0+2] = 0x3d0000;  // check if module in Tx
-    CC1200[0x100*1+2] = 0x3d0000;  // check if module in Tx
-    CC1200[0x100*2+2] = 0x3d0000;  // check if module in Tx
-    CC1200[0x100*3+2] = 0x3d0000;  // check if module in Tx
-    data0 = 0;
-    data1 = 0;
-    data2 = 0;
-    data3 = 0;
-    while ((data0 != 0x20) && (data1 != 0x20) && (data2 != 0x20) && (data3 != 0x20))
+    CC1200[0x100*Sel+2] = 0x3d0000;  // check if module in Tx
+    data = 0;
+    while ((data != 0x20) && (data != 0x10))
     {
-        CC1200[0x100*0+0] = 1;
-        CC1200[0x100*1+0] = 1;
-        CC1200[0x100*2+0] = 1;
-        CC1200[0x100*3+0] = 1;
-    	loop0 = 1;
-    	loop1 = 1;
-    	loop2 = 1;
-    	loop3 = 1;
-    	while  (loop0 || loop1 || loop2 || loop3)
-    	{
-    		loop0 = CC1200[0x100*0+1];
-    		loop1 = CC1200[0x100*1+1];
-    		loop2 = CC1200[0x100*2+1];
-    		loop3 = CC1200[0x100*3+1];
-    	};
-		data0 = CC1200[0x100*0+3] & 0xf0;
-		data1 = CC1200[0x100*1+3] & 0xf0;
-		data2 = CC1200[0x100*2+3] & 0xf0;
-		data3 = CC1200[0x100*3+3] & 0xf0;
-		if ((data0 != 0x20) && (data1 != 0x20) && (data0 != 0x20) && (data1 != 0x20))
+		CC1200[0x100*Sel+0] = 1;
+		loop = 1;
+		while (loop)
+		{
+			loop = CC1200[0x100*Sel+1];
+		};
+		data = CC1200[0x100*Sel+3] & 0xf0;
+		if ((data != 0x20) && (data != 0x10))
 		{
 			xil_printf("Chip is not set\n\r");
 		}
     }
-//    if (data == 0x20){
+    if (data == 0x20){
 	xil_printf("Switch to Tx seccesfuly in Tx\n\r");
-//    } else if (data == 0x10){
-//	xil_printf("Switch to Rx seccesfuly in Rx\n\r");
-//    }
+    } else if (data == 0x10){
+	xil_printf("Switch to Rx seccesfuly in Rx\n\r");
+    }
 
 //    CC1200[0x100*Sel+0] = Tx_wait; // Tx Pkt Size
-    CC1200[0x100*0+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*1+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*2+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*3+9] = Tx_Pkt_size; // Tx Pkt Size
-   	CC1200[0x100*0+0] = 2; // Enable Tx
-   	CC1200[0x100*1+0] = 2; // Enable Tx
-   	CC1200[0x100*2+0] = 2; // Enable Tx
-   	CC1200[0x100*3+0] = 2; // Enable Tx
+    CC1200[0x100*Sel+9] = Tx_Pkt_size; // Tx Pkt Size
+   	CC1200[0x100*Sel+0] = 2; // Enable Tx
 
 	xil_printf("===== Set Up Camera =====\n\r");
     APB[5] = START_FREQ; // set SCCB clock to ~200Khz

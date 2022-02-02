@@ -176,10 +176,10 @@ assign MOSId = CC1200MOSI[2];
 assign CS_nd = CC1200CS_n[2];
 assign CC1200MISO[2] = MISOd;
 
-assign je[0] = (CC1200GPIO_OutEn[12]) ? CC1200GPIO_Out[12] : 1'bz;
-assign je[1] = (CC1200GPIO_OutEn[13]) ? CC1200GPIO_Out[13] : 1'bz;
-assign je[2] = (CC1200GPIO_OutEn[14]) ? CC1200GPIO_Out[14] : 1'bz;
-assign je[3] = (CC1200GPIO_OutEn[15]) ? CC1200GPIO_Out[15] : 1'bz;
+assign je[1] = (CC1200GPIO_OutEn[12]) ? CC1200GPIO_Out[12] : 1'bz;
+assign je[2] = (CC1200GPIO_OutEn[13]) ? CC1200GPIO_Out[13] : 1'bz;
+assign je[3] = (CC1200GPIO_OutEn[14]) ? CC1200GPIO_Out[14] : 1'bz;
+assign je[4] = (CC1200GPIO_OutEn[15]) ? CC1200GPIO_Out[15] : 1'bz;
 
 assign SCLKe = CC1200SCLK[3];
 assign MOSIe = CC1200MOSI[3];

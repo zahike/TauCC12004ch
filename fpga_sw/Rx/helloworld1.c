@@ -59,20 +59,20 @@ u32 *CC1200 = XPAR_APB_M_0_BASEADDR;
 
 void ResetCC1200();
 
-int writeSCC120 (int Sel, int add, int data);
-int readSCC120  (int Sel, int add);
-int writeLCC120 (int Sel, int add, int data);
-int readLCC120  (int Sel, int add);
+int writeSCC120 (int add, int data);
+int readSCC120 (int add);
+int writeLCC120 (int add, int data);
+int readLCC120 (int add);
 
-void TxCC1200_init(int Sel, int Pkt_size);
-void RxCC1200_init(int Sel, int Pkt_size);
+void TxCC1200_init(int Pkt_size);
+void RxCC1200_init(int Pkt_size);
 
 int main()
 {
-	int loop0,loop1,loop2,loop3;
-	int data0,data1,data2,data3;
-	int busy0,busy1,busy2,busy3;
-	int Link0,Link1,Link2,Link3;
+	int loop;
+	int data;
+	int Link;
+	int busy;
 
     init_platform();
 
@@ -80,79 +80,94 @@ int main()
 
     ResetCC1200();
 
-    xil_printf("Configure CC1200\n\r");
-    TxCC1200_init(0, Tx_Pkt_size);
-    TxCC1200_init(1, Tx_Pkt_size);
-	writeLCC120(1, 0x2F0C,   0x5B);
-	writeLCC120(1, 0x2F0D,   0x80);
-    TxCC1200_init(2, Tx_Pkt_size);
-   	writeSCC120(2, 0x0020,   0x14);
-	writeLCC120(2, 0x2F0C,   0x5E);
-	writeLCC120(2, 0x2F0D,   0x00);
-    TxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3, 0x2F0C,   0x5B);
-	writeLCC120(3, 0x2F0D,   0x00);
+#ifdef TX
+    TxCC1200_init(Tx_Pkt_size);
+#endif
+#ifdef RX
+	RxCC1200_init(Rx_Pkt_size);
+#endif
+
+    xil_printf("Read normal registers\n\r");
+
+    usleep(100);
+
+    for (int i=0;i<0x30;i++)
+    {
+    	data = (readSCC120(i) & 0xff);
+    	xil_printf("                  0x%04x   0x%02x \n\r",i,data);
+    }
 
 
-    CC1200[0x100*0+4] = 4;        // switch to command mode
-    CC1200[0x100*1+4] = 4;        // switch to command mode
-    CC1200[0x100*2+4] = 4;        // switch to command mode
-    CC1200[0x100*3+4] = 4;        // switch to command mode
+    for (int i=0x2F00;i<0x2FFF;i++)
+    {
+    	data = (readLCC120(i) & 0xff);
+    	xil_printf("                  0x%04x   0x%02x \n\r",i,data);
+    }
+
+
+    CC1200[4] = 4;        // switch to command mode
+#ifdef TX
     xil_printf("set chip to Tx\n\r");
-    CC1200[0x100*0+2] = 0x340000; // set chip to Rx
-    CC1200[0x100*1+2] = 0x340000; // set chip to Rx
-    CC1200[0x100*2+2] = 0x340000; // set chip to Rx
-    CC1200[0x100*3+2] = 0x340000; // set chip to Rx
-    CC1200[0x100*0+0] = 1;
-    CC1200[0x100*1+0] = 1;
-    CC1200[0x100*2+0] = 1;
-    CC1200[0x100*3+0] = 1;
-	loop0 = 1;
-	loop1 = 1;
-	loop2 = 1;
-	loop3 = 1;
-	while (loop0 || loop1 || loop2 || loop3)
+    CC1200[2] = 0x350000; // set chip to Tx
+#endif
+#ifdef RX
+    xil_printf("set chip to Rx\n\r");
+    CC1200[2] = 0x340000; // set chip to Rx
+#endif
+    CC1200[0] = 1;
+	loop = 1;
+	while (loop)
 	{
-		loop0 = CC1200[0x100*0+1];
-		loop1 = CC1200[0x100*1+1];
-		loop2 = CC1200[0x100*2+1];
-		loop3 = CC1200[0x100*3+1];
+		loop = CC1200[1];
 	};
-	
-    CC1200[0x100*0+9] = Tx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*1+9] = Tx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*2+9] = Tx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*3+9] = Tx_Pkt_size + 2; // Rx Pkt Size
-   	CC1200[0x100*0+0] = 4; // Enable Rx
-   	CC1200[0x100*1+0] = 4; // Enable Rx
-   	CC1200[0x100*2+0] = 4; // Enable Rx
-   	CC1200[0x100*3+0] = 4; // Enable Rx
-	
+	    CC1200[12] = Cor_Thre; // Rx Pkt Size
+	    CC1200[10] = Rx_Pkt_size + 2; // Rx Pkt Size
+	    CC1200[0] = 4; // Enable Rx
+
+//    CC1200[2] = 0x3d0000;  // check if module in Tx
+//    data = 0;
+//    while ((data != 0x20) && (data != 0x10))
+//    {
+//		CC1200[0] = 1;
+//		loop = 1;
+//		while (loop)
+//		{
+//			loop = CC1200[1];
+//		};
+//		data = CC1200[3] & 0xf0;
+//		if ((data != 0x20) && (data != 0x10))
+//		{
+//			xil_printf("Chip is not set\n\r");
+//		}
+//    }
+//    if (data == 0x20){
+//	xil_printf("Switch to Tx seccesfuly in Tx\n\r");
+//    } else if (data == 0x10){
+//	xil_printf("Switch to Rx seccesfuly in Rx\n\r");
+//    }
+//
+//#ifdef TX
+//    CC1200[9] = Tx_Pkt_size; // Tx Pkt Size
+//   	CC1200[0] = 2; // Enable Tx
+//	MEM[0] = 1;		// send data from FIFO
+//#endif
+//#ifdef RX
+//    CC1200[12] = Cor_Thre; // Rx Pkt Size
+//    CC1200[10] = Rx_Pkt_size + 2; // Rx Pkt Size
+//    CC1200[0] = 4; // Enable Rx
+//#endif
 while (1){
-	busy0 = 1;
-	busy1 = 1;
-	busy2 = 1;
-	busy3 = 1;
-	while ((busy0 == 1) || (busy1 == 1) || (busy2 == 1) || (busy3 == 1)){
-		busy0 = CC1200[0x100*0+1];
-		busy0 = CC1200[0x100*1+1];
-		busy0 = CC1200[0x100*2+1];
-		busy0 = CC1200[0x100*3+1];
+	busy = 1;
+	while (busy == 1){
+		busy = CC1200[1];
 	}
-	data0 = CC1200[0x100*0+13];
-	data1 = CC1200[0x100*1+13];
-	data2 = CC1200[0x100*2+13];
-	data3 = CC1200[0x100*3+13];
-	Link0 = data0-81;
-	Link1 = data1-81;
-	Link2 = data2-81;
-	Link3 = data3-81;
-	// if ((Link0 == -209)||(Link1 == -209)||(Link2 == -209)||(Link3 == -209)){
-		// xil_printf("Link is Down \r\n");
-	// } else {
-		// xil_printf("RF = %d DBm\t",Link);
-	// }
-	xil_printf("RF = %d %d %d %d DBm\t",Link0,Link1,Link2,Link3);
+	data = CC1200[13];
+	Link = data-81;
+	if (Link == -209){
+		xil_printf("Link is Down \r\n");
+	} else {
+		xil_printf("RF = %d DBm\t",Link);
+	}
 
 	sleep (1);
 }

@@ -282,7 +282,7 @@ assign SelStat = SelStatCount;   //  input [1:0]FraimSel;
 assign led[2] = SelHDMICount; //[0] }]; #IO_L23P_T3_35 Sch=led[0]  
 assign led[3] = SelStatCount; //[0] }]; #IO_L23P_T3_35 Sch=led[0]  
 
-assign CC1200GPIO_In = {  je[3],  je[2],  je[1],  je[0],
+assign CC1200GPIO_In = {  je[4],  je[3],  je[2],  je[1],
                         jd_n[2],jd_p[2],jd_n[1],jd_p[1],
                         jc_n[2],jc_p[2],jc_n[1],jc_p[1],
                         jb_n[2],jb_p[2],jb_n[1],jb_p[1]

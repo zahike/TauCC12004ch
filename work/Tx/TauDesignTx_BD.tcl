@@ -403,7 +403,7 @@ proc create_root_design { parentCell } {
    CONFIG.C_DATA_DEPTH {4096} \
    CONFIG.C_ENABLE_ILA_AXI_MON {false} \
    CONFIG.C_MONITOR_TYPE {Native} \
-   CONFIG.C_NUM_OF_PROBES {9} \
+   CONFIG.C_NUM_OF_PROBES {10} \
    CONFIG.C_PROBE0_WIDTH {4} \
    CONFIG.C_PROBE2_WIDTH {4} \
    CONFIG.C_PROBE3_WIDTH {48} \
@@ -412,6 +412,7 @@ proc create_root_design { parentCell } {
    CONFIG.C_PROBE6_WIDTH {4} \
    CONFIG.C_PROBE7_WIDTH {4} \
    CONFIG.C_PROBE8_WIDTH {4} \
+   CONFIG.C_PROBE9_WIDTH {16} \
  ] $ila_0
 
   # Create instance: processing_system7_0, and set properties
@@ -954,7 +955,7 @@ proc create_root_design { parentCell } {
   connect_bd_net -net CC1200_reap_0_SCLK [get_bd_ports SCLK] [get_bd_pins CC1200_reap_0/SCLK] [get_bd_pins ila_0/probe5]
   connect_bd_net -net CC1200_reap_0_TranNextData [get_bd_pins CC1200_reap_0/TranNextData] [get_bd_pins TxMem_0/TranNextData] [get_bd_pins ila_0/probe0]
   connect_bd_net -net FraimSel_0_1 [get_bd_ports FraimSel] [get_bd_pins TxMem_0/FraimSel]
-  connect_bd_net -net GPIO_In_1_1 [get_bd_ports GPIO_In] [get_bd_pins CC1200_reap_0/GPIO_In]
+  connect_bd_net -net GPIO_In_1_1 [get_bd_ports GPIO_In] [get_bd_pins CC1200_reap_0/GPIO_In] [get_bd_pins ila_0/probe9]
   connect_bd_net -net MIPI_D_PHY_RX_0_RxByteClkHS [get_bd_pins MIPI_CSI_2_RX_0/RxByteClkHS] [get_bd_pins MIPI_D_PHY_RX_0/RxByteClkHS]
   connect_bd_net -net MISO_0_1 [get_bd_ports MISO] [get_bd_pins CC1200_reap_0/MISO] [get_bd_pins ila_0/probe7]
   connect_bd_net -net Mem_cont_0_1 [get_bd_ports Mem_cont] [get_bd_pins TxMem_0/Mem_cont]
