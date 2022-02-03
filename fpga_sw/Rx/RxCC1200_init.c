@@ -42,8 +42,8 @@ void RxCC1200_init(int Sel,int Pkt_size)
 	writeSCC120(Sel, 0x001D,   0x00);
 	writeSCC120(Sel, 0x001E,   0x00);
 	writeSCC120(Sel, 0x001F,   0x0B);
-//	writeSCC120(Sel, 0x0020,   0x14);
-	writeSCC120(Sel, 0x0020,   0x12);
+	writeSCC120(Sel, 0x0020,   0x12);// freq 905Mhz 910Mhz 915Mhz 920Mhz
+//	writeSCC120(Sel, 0x0020,   0x14);// freq 470Mhz
 	writeSCC120(Sel, 0x0021,   0x08);
 	writeSCC120(Sel, 0x0022,   0x21);
 	writeSCC120(Sel, 0x0023,   0x00);
@@ -57,8 +57,6 @@ void RxCC1200_init(int Sel,int Pkt_size)
 	writeSCC120(Sel, 0x002B,   0x7F);
 	writeSCC120(Sel, 0x002C,   0x56);
 	writeSCC120(Sel, 0x002D,   0x0F);
-//	writeSCC120(Sel, 0x002E,   0x0A);
-//	writeSCC120(Sel, 0x002E,   0x12);
 	writeSCC120(Sel, 0x002E,   Pkt_size);
 						 
 	writeLCC120(Sel, 0x2F00,   0x00);
@@ -73,10 +71,16 @@ void RxCC1200_init(int Sel,int Pkt_size)
 	writeLCC120(Sel, 0x2F09,   0x00);
 	writeLCC120(Sel, 0x2F0A,   0x00);
 	writeLCC120(Sel, 0x2F0B,   0x00);
-//	writeLCC120(Sel, 0x2F0C,   0x5E);
-	writeLCC120(Sel, 0x2F0C,   0x5C);
-//	writeLCC120(Sel, 0x2F0D,   0x00);
-	writeLCC120(Sel, 0x2F0D,   0x00);
+	writeLCC120(Sel, 0x2F0C,   0x5C);// freq 920Mhz
+//	writeLCC120(Sel, 0x2F0C,   0x5B);// freq 915Mhz
+//	writeLCC120(Sel, 0x2F0C,   0x5B);// freq 910Mhz
+//	writeLCC120(Sel, 0x2F0C,   0x5A);// freq 905Mhz
+//	writeLCC120(Sel, 0x2F0C,   0x5E);// freq 470Mhz
+	writeLCC120(Sel, 0x2F0D,   0x00);// freq 920Mhz
+//	writeLCC120(Sel, 0x2F0D,   0x80);// freq 915Mhz
+//	writeLCC120(Sel, 0x2F0D,   0x00);// freq 910Mhz
+//	writeLCC120(Sel, 0x2F0D,   0x80);// freq 905Mhz
+//	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
 	writeLCC120(Sel, 0x2F0E,   0x00);
 	writeLCC120(Sel, 0x2F0F,   0x02);
 	writeLCC120(Sel, 0x2F10,   0xEE);

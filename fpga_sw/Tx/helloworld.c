@@ -89,15 +89,15 @@ int main()
     init_platform();
 
     xil_printf("Hello World\n\r");
-	sleep(1);
 
 	xil_printf("===== Set Up Transmitter =====\n\r");
     xil_printf("Reset CC1200\n\r");
     ResetCC1200(Sel);
+	sleep(1);
 
     xil_printf("Configure CC1200\n\r");
     TxCC1200_init(Sel, Tx_Pkt_size);
-	writeLCC120(Sel , 0x2F0C,   0x5A);// freq915
+	writeLCC120(Sel , 0x2F0C,   0x5A);// freq905
 	writeLCC120(Sel , 0x2F0D,   0x80);
 
     CC1200[0x100*Sel+4] = 4;        // switch to command mode
