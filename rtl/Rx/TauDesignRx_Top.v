@@ -84,14 +84,6 @@ wire rstn = ~btn[0];
 /////////////////////////////////////////////////////////// 
 /////////////// TauDesignRx_BD Block design ///////////////
 /////////////////////////////////////////////////////////// 
-//wire [3:0] GPIO_OutEn;		//output [3:0] GPIO_OutEn_0;
-//wire [3:0] GPIO_Out;		//output [3:0] GPIO_Out_0;
-//wire [3:0] GPIO_In;		//input [3:0] GPIO_In_0;
-
-//wire  SCLK_1;		//output  SCLK_0;
-//wire  MOSI_1;		//output  MOSI_0;
-//wire  MISO_1; 		//input  MISO_0;
-//wire  CS_n_1;		//output  CS_n_0;
 
 wire [15:0] CC1200GPIO_In;     //   input  [15:0] GPIO_In;
 wire [15:0] CC1200GPIO_OutEn;  //   output [15:0] GPIO_OutEn;
@@ -140,7 +132,7 @@ TauDesignRx_BD TauDesignRx_BD_inst
 );
     
 
-assign CC1200GPIO_In = {  je[3],  je[2],  je[1],  je[0],
+assign CC1200GPIO_In = {  je[4],  je[3],  je[2],  je[1],
                         jd_n[2],jd_p[2],jd_n[1],jd_p[1],
                         jc_n[2],jc_p[2],jc_n[1],jc_p[1],
                         jb_n[2],jb_p[2],jb_n[1],jb_p[1]

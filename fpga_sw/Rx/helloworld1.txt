@@ -69,10 +69,10 @@ void RxCC1200_init(int Sel, int Pkt_size);
 
 int main()
 {
-	int loop0,loop1,loop2,loop3;
-	int data0,data1,data2,data3;
-	int Link0,Link1,Link2,Link3;
-	int busy0,busy1,busy2,busy3;
+	int loop;
+	int data;
+	int Link;
+	int busy;
 	int Sel = 0;
     init_platform();
 
@@ -80,91 +80,43 @@ int main()
 
 	xil_printf("===== Set Up Receiver =====\n\r");
     xil_printf("Reset CC1200\n\r");
-    ResetCC1200(0);
-    ResetCC1200(1);
-    ResetCC1200(2);
-    ResetCC1200(3);
+    ResetCC1200(Sel);
 	sleep(1);
 
     xil_printf("Configure CC1200\n\r");
-	RxCC1200_init(0, Tx_Pkt_size);// freq920
-	RxCC1200_init(1, Tx_Pkt_size);
-	writeLCC120(1 , 0x2F0C,   0x5B);// freq915
-	writeLCC120(1 , 0x2F0D,   0x80);
-	RxCC1200_init(2, Tx_Pkt_size);
-	writeLCC120(2 , 0x2F0C,   0x5B);// freq910
-	writeLCC120(2 , 0x2F0D,   0x00);
-	RxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3 , 0x200C,   0x14);// Old Board
-	writeLCC120(3 , 0x2F0C,   0x5E);// freq470
-	writeLCC120(3 , 0x2F0D,   0x00);
+	RxCC1200_init(Sel, Rx_Pkt_size);
+	writeLCC120(Sel , 0x2F0C,   0x5A);// freq905
+	writeLCC120(Sel , 0x2F0D,   0x80);
 
 
 
-    CC1200[0x100*0+4] = 4;        // switch to command mode
-    CC1200[0x100*1+4] = 4;        // switch to command mode
-    CC1200[0x100*2+4] = 4;        // switch to command mode
-    CC1200[0x100*3+4] = 4;        // switch to command mode
+    CC1200[0x100*Sel+4] = 4;        // switch to command mode
     xil_printf("set chip to Rx\n\r");
-    CC1200[0x100*0+2] = 0x340000; // set chip to Tx
-    CC1200[0x100*1+2] = 0x340000; // set chip to Tx
-    CC1200[0x100*2+2] = 0x340000; // set chip to Tx
-    CC1200[0x100*3+2] = 0x340000; // set chip to Tx
-    CC1200[0x100*0+0] = 1;
-    CC1200[0x100*1+0] = 1;
-    CC1200[0x100*2+0] = 1;
-    CC1200[0x100*3+0] = 1;
-	loop0 = 1;
-	loop1 = 1;
-	loop2 = 1;
-	loop3 = 1;
-	while (loop0||loop1||loop2||loop3)
-//	while (loop1)
+    CC1200[0x100*Sel+2] = 0x340000; // set chip to Tx
+    CC1200[0x100*Sel+0] = 1;
+	loop = 1;
+	while (loop)
 	{
-		loop0 = CC1200[0x100*0+1];
-		loop1 = CC1200[0x100*1+1];
-		loop2 = CC1200[0x100*2+1];
-		loop3 = CC1200[0x100*3+1];
+		loop = CC1200[0x100*Sel+1];
 	};
+	    CC1200[0x100*Sel+10] = Rx_Pkt_size + 2; // Rx Pkt Size
+	    CC1200[0x100*Sel+0] = 4; // Enable Rx
 
-    CC1200[0x100*0+10] = Rx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*1+10] = Rx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*2+10] = Rx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*3+10] = Rx_Pkt_size + 2; // Rx Pkt Size
-    CC1200[0x100*0+0] = 4; // Enable Rx
-    CC1200[0x100*1+0] = 4; // Enable Rx
-    CC1200[0x100*2+0] = 4; // Enable Rx
-    CC1200[0x100*3+0] = 4; // Enable Rx
+while (1){
+	busy = 1;
+	while (busy == 1){
+		busy = CC1200[0x100*Sel+1];
+	}
+	data = CC1200[0x100*Sel+13];
+	Link = data-81;
+	if (Link == -209){
+		xil_printf("Link is Down \r\n");
+	} else {
+		xil_printf("RF = %d DBm\t",Link);
+	}
 
-//while (1){
-//	busy0 = 1;
-//	while (busy0 == 1)
-//	{
-//		busy0 = CC1200[0x100*0+1];
-//	}
-//	data0 = CC1200[0x100*0+13];
-//	Link0 = data0-81;
-//	if (Link0 == -209){
-//		xil_printf("Link 0 is Down \r\n");
-//	} else {
-//		xil_printf("RF0 = %d DBm  ",Link0);
-//	}
-//
-//	busy0 = 1;
-//	while (busy0 == 1)
-//	{
-//		busy0 = CC1200[0x100*1+1];
-//	}
-//	data0 = CC1200[0x100*1+13];
-//	Link0 = data0-81;
-//	if (Link0 == -209){
-//		xil_printf("Link 1 is Down \r\n");
-//	} else {
-//		xil_printf("RF1 = %d DBm\t",Link0);
-//	}
-//
-//	sleep (1);
-//}
+	sleep (1);
+}
     xil_printf("GoodBye World\n\r");
 
     cleanup_platform();
