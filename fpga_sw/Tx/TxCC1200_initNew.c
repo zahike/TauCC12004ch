@@ -1,5 +1,5 @@
 /*
- * TxCC1200_init.c
+ * TxCC1200_initNew.c
  *
  *  Created on: 7 בדצמ× 2021
  *      Author: Owner
@@ -7,7 +7,7 @@
 
 #include "CC1200.h"
 
-void TxCC1200_init(int Sel,int Pkt_size)
+void TxCC1200_initNew(int Sel,int Pkt_size)
 {
 	writeSCC120(Sel, 0x0000,   0x06);
 	writeSCC120(Sel, 0x0001,   0x06);

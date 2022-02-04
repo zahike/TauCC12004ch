@@ -18,7 +18,7 @@ void RxCC1200_init(int Sel,int Pkt_size)
 	writeSCC120(Sel, 0x0006,   0x51);
 	writeSCC120(Sel, 0x0007,   0xDE);
 //  writeSCC120(Sel, 0x0008,   0xA8);   Rx sync word thrashold
-	writeSCC120(Sel, 0x0008,   0xAA);
+	writeSCC120(Sel, 0x0008,   0xA9);
 	writeSCC120(Sel, 0x0009,   0x03);
 	writeSCC120(Sel, 0x000A,   0x47);
 	writeSCC120(Sel, 0x000B,   0x2F);
@@ -80,7 +80,7 @@ void RxCC1200_init(int Sel,int Pkt_size)
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 915Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x00);// freq 910Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 905Mhz
-//	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
+	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
 	writeLCC120(Sel, 0x2F0E,   0x00);
 	writeLCC120(Sel, 0x2F0F,   0x02);
 	writeLCC120(Sel, 0x2F10,   0xEE);

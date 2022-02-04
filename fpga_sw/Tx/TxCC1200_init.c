@@ -79,7 +79,7 @@ void TxCC1200_init(int Sel,int Pkt_size)
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 915Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x00);// freq 910Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 905Mhz
-//	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
+	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
 	writeLCC120(Sel, 0x2F0E,   0x00);
 	writeLCC120(Sel, 0x2F0F,   0x02);
 	writeLCC120(Sel, 0x2F10,   0xEE);

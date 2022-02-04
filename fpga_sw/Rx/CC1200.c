@@ -104,7 +104,7 @@ void ResetCC1200(int Sel)
 		loop0 = CC1200[0x100*Sel+1];
 	};
 
-    CC1200[0x100*Sel+2] = 0x3d0000;  // check if module in reset
+    CC1200[0x100*0+2] = 0x3d0000;  // check if module in reset
     data0 = 0;
     while (data0 != 0x0f)
     {
@@ -116,11 +116,11 @@ void ResetCC1200(int Sel)
 		};
 		data0 = CC1200[0x100*Sel+3] & 0xff;
 		if (data0 != 0x0f)  {
-			xil_printf("Chip 0 not set\n\r");
+			xil_printf("Chip %d not set\n\r",Sel);
 		}
     }
 
-    xil_printf("Chips reset succesfuly \n\r");
+    xil_printf("Chip %d reset succesfuly \n\r",Sel);
 
 }
 

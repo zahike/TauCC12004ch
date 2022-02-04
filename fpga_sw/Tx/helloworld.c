@@ -49,16 +49,14 @@
 #include "platform.h"
 #include "xil_printf.h"
 #include "SCCB.h"
+#include "CC1200.h"
+
 #define START_FREQ   0x100
-#define TX
-//#define RX
-#define Tx_wait 0x0000
 #define Tx_Pkt_size 126
 #define Rx_Pkt_size 126
 
 u32 *APB = XPAR_APB_M_0_BASEADDR;
 u32 *CC1200 = XPAR_APB_M_1_BASEADDR;
-//u32 *DDS = XPAR_APB_M_1_BASEADDR;
 
 int writeSCCB (int WriteData);
 int write4readSCCB (int WriteData);
@@ -75,7 +73,11 @@ int writeLCC120 (int Sel, int add, int data);
 int readLCC120  (int Sel, int add);
 
 void TxCC1200_init(int Sel, int Pkt_size);
+void TxCC1200_initOld(int Sel, int Pkt_size);
+void TxCC1200_initNew(int Sel, int Pkt_size);
 void RxCC1200_init(int Sel, int Pkt_size);
+void RxCC1200_initOld(int Sel, int Pkt_size);
+void RxCC1200_initNew(int Sel, int Pkt_size);
 
 int main()
 {
@@ -83,8 +85,6 @@ int main()
 	int Hdata,Ldata,CamID;
 	int loop0,loop1,loop2,loop3;
 	int data0,data1,data2,data3;
-	int Add1,Add2;
-	int pll = 0;
 	int Sel = 0;
     init_platform();
 
@@ -103,12 +103,12 @@ int main()
     TxCC1200_init(1, Tx_Pkt_size);
 	writeLCC120(1 , 0x2F0C,   0x5B);// freq915
 	writeLCC120(1 , 0x2F0D,   0x80);
-    TxCC1200_init(2, Tx_Pkt_size);
-	writeLCC120(2 , 0x2F0C,   0x5B);// freq910
-	writeLCC120(2 , 0x2F0D,   0x00);
-    TxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3 , 0x200C,   0x14);// Old Board
-	writeLCC120(3 , 0x2F0C,   0x5E);// freq470
+	TxCC1200_init(2, Tx_Pkt_size); 
+	writeLCC120(1 , 0x0020,   0x14);// Old Board
+	writeLCC120(1 , 0x2F0C,   0x5E);
+	writeLCC120(1 , 0x2F0D,   0x00);
+	TxCC1200_init(3, Tx_Pkt_size);
+	writeLCC120(3 , 0x2F0C,   0x5B); // freq910
 	writeLCC120(3 , 0x2F0D,   0x00);
 
     CC1200[0x100*0+4] = 4;        // switch to command mode
@@ -129,7 +129,9 @@ int main()
 	loop2 = 1;
 	loop3 = 1;
 	while (loop0||loop1||loop2||loop3)
-//	while (loop1)
+//	while (loop0||loop1||loop2)
+//	while (loop0||loop1)
+//	while (loop0)
 	{
 		loop0 = CC1200[0x100*0+1];
 		loop1 = CC1200[0x100*1+1];
@@ -137,29 +139,6 @@ int main()
 		loop3 = CC1200[0x100*3+1];
 	};
 
-//    CC1200[0x100*0+2] = 0x3d0000;  // check if module in Tx
-//    CC1200[0x100*1+2] = 0x3d0000;  // check if module in Tx
-//    data0 = 0;
-//    data1 = 0;
-//    while ((data != 0x20) && (data != 0x10))
-//    {
-//		CC1200[0x100*Sel+0] = 1;
-//		loop = 1;
-//		while (loop)
-//		{
-//			loop = CC1200[0x100*Sel+1];
-//		};
-//		data = CC1200[0x100*Sel+3] & 0xf0;
-//		if ((data != 0x20) && (data != 0x10))
-//		{
-//			xil_printf("Chip is not set\n\r");
-//		}
-//    }
-//    if (data == 0x20){
-//	xil_printf("Switch to Tx seccesfuly in Tx\n\r");
-//    } else if (data == 0x10){
-//	xil_printf("Switch to Rx seccesfuly in Rx\n\r");
-//    }
 
     CC1200[0x100*0+9] = Tx_Pkt_size; // Tx Pkt Size
     CC1200[0x100*1+9] = Tx_Pkt_size; // Tx Pkt Size

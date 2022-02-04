@@ -1,13 +1,13 @@
 /*
- * TxCC1200_init.c
+ * RxCC1200_initNew.c
  *
- *  Created on: 7 בדצמ× 2021
- *      Author: Owner
+ *  Created on: Nov 21, 2021
+ *      Author: udi
  */
 
 #include "CC1200.h"
 
-void TxCC1200_init(int Sel,int Pkt_size)
+void RxCC1200_initNew(int Sel,int Pkt_size)
 {
 	writeSCC120(Sel, 0x0000,   0x06);
 	writeSCC120(Sel, 0x0001,   0x06);
@@ -17,7 +17,8 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeSCC120(Sel, 0x0005,   0x0B);
 	writeSCC120(Sel, 0x0006,   0x51);
 	writeSCC120(Sel, 0x0007,   0xDE);
-	writeSCC120(Sel, 0x0008,   0xA8);
+//  writeSCC120(Sel, 0x0008,   0xA8);   Rx sync word thrashold
+	writeSCC120(Sel, 0x0008,   0xAA);
 	writeSCC120(Sel, 0x0009,   0x03);
 	writeSCC120(Sel, 0x000A,   0x47);
 	writeSCC120(Sel, 0x000B,   0x2F);
@@ -51,13 +52,13 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeSCC120(Sel, 0x0026,   0x00);
 	writeSCC120(Sel, 0x0027,   0x43);
 	writeSCC120(Sel, 0x0028,   0x00);
-	writeSCC120(Sel, 0x0029,   0x0F);
-	writeSCC120(Sel, 0x002A,   0x20);
+	writeSCC120(Sel, 0x0029,   0x3F);
+	writeSCC120(Sel, 0x002A,   0x00);
 	writeSCC120(Sel, 0x002B,   0x7F);
 	writeSCC120(Sel, 0x002C,   0x56);
 	writeSCC120(Sel, 0x002D,   0x0F);
-	writeSCC120(Sel, 0x002E,   Pkt_size);   // Paket length 13 byts
-
+	writeSCC120(Sel, 0x002E,   Pkt_size);
+						 
 	writeLCC120(Sel, 0x2F00,   0x00);
 	writeLCC120(Sel, 0x2F01,   0x23);
 	writeLCC120(Sel, 0x2F02,   0x0B);
@@ -79,13 +80,13 @@ void TxCC1200_init(int Sel,int Pkt_size)
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 915Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x00);// freq 910Mhz
 //	writeLCC120(Sel, 0x2F0D,   0x80);// freq 905Mhz
-	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
+//	writeLCC120(Sel, 0x2F0D,   0x00);// freq 470Mhz
 	writeLCC120(Sel, 0x2F0E,   0x00);
 	writeLCC120(Sel, 0x2F0F,   0x02);
 	writeLCC120(Sel, 0x2F10,   0xEE);
 	writeLCC120(Sel, 0x2F11,   0x10);
-	writeLCC120(Sel, 0x2F12,   0x04);
-	writeLCC120(Sel, 0x2F13,   0xA3);
+	writeLCC120(Sel, 0x2F12,   0x07);
+	writeLCC120(Sel, 0x2F13,   0xA0);
 	writeLCC120(Sel, 0x2F14,   0x00);
 	writeLCC120(Sel, 0x2F15,   0x20);
 	writeLCC120(Sel, 0x2F16,   0x40);
@@ -94,8 +95,8 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeLCC120(Sel, 0x2F19,   0x03);
 	writeLCC120(Sel, 0x2F1A,   0x00);
 	writeLCC120(Sel, 0x2F1B,   0x33);
-	writeLCC120(Sel, 0x2F1C,   0xF7);
-	writeLCC120(Sel, 0x2F1D,   0x0F);
+	writeLCC120(Sel, 0x2F1C,   0xFF);
+	writeLCC120(Sel, 0x2F1D,   0x17);
 	writeLCC120(Sel, 0x2F1E,   0x00);
 	writeLCC120(Sel, 0x2F1F,   0x00);
 	writeLCC120(Sel, 0x2F20,   0x6E);
@@ -167,10 +168,10 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeLCC120(Sel, 0x2F8C,   0x00);
 	writeLCC120(Sel, 0x2F8D,   0x01);
 	writeLCC120(Sel, 0x2F8E,   0x00);
-	writeLCC120(Sel, 0x2F8F,   0x20);
-	writeLCC120(Sel, 0x2F90,   0x11);
+	writeLCC120(Sel, 0x2F8F,   0x00);
+	writeLCC120(Sel, 0x2F90,   0x00);
 	writeLCC120(Sel, 0x2F91,   0x00);
-	writeLCC120(Sel, 0x2F92,   0x10);
+	writeLCC120(Sel, 0x2F92,   0x01);
 	writeLCC120(Sel, 0x2F93,   0x00);
 	writeLCC120(Sel, 0x2F94,   0x00);
 	writeLCC120(Sel, 0x2F95,   0x00);
@@ -183,7 +184,7 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeLCC120(Sel, 0x2F9C,   0x40);
 	writeLCC120(Sel, 0x2F9D,   0x00);
 	writeLCC120(Sel, 0x2F9E,   0x00);
-	writeLCC120(Sel, 0x2F9F,   0x00);
+	writeLCC120(Sel, 0x2F9F,   0x3C);
 	writeLCC120(Sel, 0x2FA0,   0x00);
 	writeLCC120(Sel, 0x2FA1,   0x00);
 	writeLCC120(Sel, 0x2FA2,   0x00);
@@ -228,6 +229,4 @@ void TxCC1200_init(int Sel,int Pkt_size)
 	writeLCC120(Sel, 0x2FFD,   0x00);
 	writeLCC120(Sel, 0x2FFE,   0x00);
 	writeLCC120(Sel, 0x2FFF,   0x00);
-
 };
-

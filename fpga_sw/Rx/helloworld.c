@@ -50,8 +50,7 @@
 #include "xil_printf.h"
 #include "CC1200.h"
 
-//#define TX
-#define RX
+
 #define Tx_Pkt_size 126
 #define Rx_Pkt_size 126
 #define Cor_Thre 20
@@ -65,7 +64,11 @@ int writeLCC120 (int Sel, int add, int data);
 int readLCC120  (int Sel, int add);
 
 void TxCC1200_init(int Sel, int Pkt_size);
+void TxCC1200_initOld(int Sel, int Pkt_size);
+void TxCC1200_initNew(int Sel, int Pkt_size);
 void RxCC1200_init(int Sel, int Pkt_size);
+void RxCC1200_initOld(int Sel, int Pkt_size);
+void RxCC1200_initNew(int Sel, int Pkt_size);
 
 int main()
 {
@@ -87,16 +90,16 @@ int main()
 	sleep(1);
 
     xil_printf("Configure CC1200\n\r");
-	RxCC1200_init(0, Tx_Pkt_size);// freq920
-	RxCC1200_init(1, Tx_Pkt_size);
+    RxCC1200_init(0, Tx_Pkt_size);// freq920
+    RxCC1200_init(1, Tx_Pkt_size);
 	writeLCC120(1 , 0x2F0C,   0x5B);// freq915
 	writeLCC120(1 , 0x2F0D,   0x80);
-	RxCC1200_init(2, Tx_Pkt_size);
-	writeLCC120(2 , 0x2F0C,   0x5B);// freq910
-	writeLCC120(2 , 0x2F0D,   0x00);
+	RxCC1200_init(2, Tx_Pkt_size); 
+	writeLCC120(1 , 0x0020,   0x14);// Old Board
+	writeLCC120(1 , 0x2F0C,   0x5E);
+	writeLCC120(1 , 0x2F0D,   0x00);
 	RxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3 , 0x200C,   0x14);// Old Board
-	writeLCC120(3 , 0x2F0C,   0x5E);// freq470
+	writeLCC120(3 , 0x2F0C,   0x5B); // freq910
 	writeLCC120(3 , 0x2F0D,   0x00);
 
 
@@ -119,7 +122,9 @@ int main()
 	loop2 = 1;
 	loop3 = 1;
 	while (loop0||loop1||loop2||loop3)
-//	while (loop1)
+//	while (loop0||loop1||loop2)
+//	while (loop0||loop1)
+//	while (loop0)
 	{
 		loop0 = CC1200[0x100*0+1];
 		loop1 = CC1200[0x100*1+1];

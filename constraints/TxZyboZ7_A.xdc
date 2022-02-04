@@ -171,7 +171,6 @@ set_property -dict {PACKAGE_PIN V13 IOSTANDARD LVCMOS33} [get_ports SCLKe]
 set_property -dict {PACKAGE_PIN U17 IOSTANDARD LVCMOS33} [get_ports CS_ne]
 set_property -dict {PACKAGE_PIN T17 IOSTANDARD LVCMOS33} [get_ports MOSIe]
 set_property -dict {PACKAGE_PIN Y17 IOSTANDARD LVCMOS33} [get_ports MISOe]
-set_property PULLDOWN true [get_ports MISOe]
                                                                     
 #USB-OTG overcurrent detect pin
 #set_property -dict { PACKAGE_PIN U13   IOSTANDARD LVCMOS33 } [get_ports { otg_oc }]; #IO_L3P_T0_DQS_PUDC_B_34 Sch=otg_oc
