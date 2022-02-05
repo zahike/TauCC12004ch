@@ -118,9 +118,9 @@ int ResetCC1200(int Sel)
     Wordcout = 0;
     while (data != 0x0f)
     {
-		CC1200[0x100*Sel+0] = 1;
 		loop = 1;
 		cout = 0;
+		CC1200[0x100*Sel+0] = 1;
 		while (loop)
 		{
 			loop = CC1200[0x100*Sel+1];

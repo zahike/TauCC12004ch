@@ -54,6 +54,7 @@
 #define START_FREQ   0x100
 #define Tx_Pkt_size 126
 #define Rx_Pkt_size 126
+#define MULTICH
 
 u32 *APB = XPAR_APB_M_0_BASEADDR;
 u32 *CC1200 = XPAR_APB_M_1_BASEADDR;
@@ -83,26 +84,33 @@ int main()
 {
 	int freq;
 	int Hdata,Ldata,CamID;
-	int ChipResetOK[4];
+	int ChipResetOK[4] = {0,0,0,0};
 	int loop;
-//	int Sel = 0;
+//	int i = 2;
     init_platform();
 
     xil_printf("Hello World\n\r");
 
 	xil_printf("===== Set Up Transmitter =====\n\r");
     xil_printf("Reset CC1200\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
+#endif
     	ChipResetOK[i] = ResetCC1200(i);
+#ifdef MULTICH
     }
+#endif
 
     xil_printf("Configure CC1200\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
+#endif
     	if (ChipResetOK[i]){
         TxCC1200_init(i, Tx_Pkt_size);// freq920
-
     	}
+#ifdef MULTICH
     }
+#endif
 
 	if (ChipResetOK[1]){
 		writeLCC120(1 , 0x2F0C,   0x5B);// freq915
@@ -119,8 +127,10 @@ int main()
 	}
 
     xil_printf("set chip to Tx\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
-    	if (ChipResetOK[1]){
+#endif
+    	if (ChipResetOK[i]){
     		CC1200[0x100*i+4] = 4;        // switch to command mode
     		CC1200[0x100*i+2] = 0x350000; // set chip to Tx
     	    CC1200[0x100*i+0] = 1;
@@ -130,12 +140,15 @@ int main()
     			loop = CC1200[0x100*i+1];
     		};
     	    CC1200[0x100*i+9] = Tx_Pkt_size; // Tx Pkt Size
+    	   	CC1200[0x100*i+0] = 2; // Enable Tx
     	}
+#ifdef MULTICH
     }
-   	CC1200[0x100*0+0] = 2; // Enable Tx
-   	CC1200[0x100*1+0] = 2; // Enable Tx
-   	CC1200[0x100*2+0] = 2; // Enable Tx
-   	CC1200[0x100*3+0] = 2; // Enable Tx
+#endif
+//   	CC1200[0x100*0+0] = 2; // Enable Tx
+//   	CC1200[0x100*1+0] = 2; // Enable Tx
+//   	CC1200[0x100*2+0] = 2; // Enable Tx
+//   	CC1200[0x100*3+0] = 2; // Enable Tx
 
 	xil_printf("===== Set Up Camera =====\n\r");
     APB[5] = START_FREQ; // set SCCB clock to ~200Khz

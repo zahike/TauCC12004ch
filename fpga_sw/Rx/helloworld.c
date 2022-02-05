@@ -53,7 +53,7 @@
 
 #define Tx_Pkt_size 126
 #define Rx_Pkt_size 126
-#define Cor_Thre 20
+#define MULTICH
 u32 *CC1200 = XPAR_APB_M_0_BASEADDR;
 
 int ResetCC1200(int Sel);
@@ -72,28 +72,37 @@ void RxCC1200_initNew(int Sel, int Pkt_size);
 
 int main()
 {
-	int ChipResetOK[4];
+	int ChipResetOK[4] = {0,0,0,0};
 	int loop;
 	int busy;
 	int RForg;
 	int RFpow;
+//	int i = 2;
     init_platform();
 
     xil_printf("Hello World\n\r");
 
 	xil_printf("===== Set Up Receiver =====\n\r");
     xil_printf("Reset CC1200\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
+#endif
     	ChipResetOK[i] = ResetCC1200(i);
+#ifdef MULTICH
     }
+#endif
 
     xil_printf("Configure CC1200\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
+#endif
     	if (ChipResetOK[i]){
         RxCC1200_init(i, Tx_Pkt_size);// freq920
 
     	}
+#ifdef MULTICH
     }
+#endif
 
 	if (ChipResetOK[1]){
 		writeLCC120(1 , 0x2F0C,   0x5B);// freq915
@@ -110,8 +119,10 @@ int main()
 	}
 
     xil_printf("set chip to Rx\n\r");
+#ifdef MULTICH
     for (int i=0;i<4;i++){
-    	if (ChipResetOK[1]){
+#endif
+    	if (ChipResetOK[i]){
     		CC1200[0x100*i+4] = 4;        // switch to command mode
     		CC1200[0x100*i+2] = 0x340000; // set chip to Rx
     	    CC1200[0x100*i+0] = 1;
@@ -121,12 +132,15 @@ int main()
     			loop = CC1200[0x100*i+1];
     		};
     		CC1200[0x100*i+10] = Rx_Pkt_size + 2; // Rx Pkt Size
+    	    CC1200[0x100*i+0] = 4; // Enable Rx
     	}
+#ifdef MULTICH
     }
-    CC1200[0x100*0+0] = 4; // Enable Rx
-    CC1200[0x100*1+0] = 4; // Enable Rx
-    CC1200[0x100*2+0] = 4; // Enable Rx
-    CC1200[0x100*3+0] = 4; // Enable Rx
+#endif
+//    CC1200[0x100*0+0] = 4; // Enable Rx
+//    CC1200[0x100*1+0] = 4; // Enable Rx
+//    CC1200[0x100*2+0] = 4; // Enable Rx
+//    CC1200[0x100*3+0] = 4; // Enable Rx
 
 while (1){
 	for(int i=0;i<4;i++){
