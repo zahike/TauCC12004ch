@@ -65,7 +65,7 @@ void Camera_init();
 void cfg_VGA_60fps();
 void cfg_advanced_awb();
 
-void ResetCC1200(int Sel);
+int ResetCC1200(int Sel);
 
 int writeSCC120 (int Sel, int add, int data);
 int readSCC120  (int Sel, int add);
@@ -83,67 +83,55 @@ int main()
 {
 	int freq;
 	int Hdata,Ldata,CamID;
-	int loop0,loop1,loop2,loop3;
-	int data0,data1,data2,data3;
-	int Sel = 0;
+	int ChipResetOK[4];
+	int loop;
+//	int Sel = 0;
     init_platform();
 
     xil_printf("Hello World\n\r");
 
 	xil_printf("===== Set Up Transmitter =====\n\r");
     xil_printf("Reset CC1200\n\r");
-    ResetCC1200(0);
-    ResetCC1200(1);
-    ResetCC1200(2);
-    ResetCC1200(3);
-	sleep(1);
+    for (int i=0;i<4;i++){
+    	ChipResetOK[i] = ResetCC1200(i);
+    }
 
     xil_printf("Configure CC1200\n\r");
-    TxCC1200_init(0, Tx_Pkt_size);// freq920
-    TxCC1200_init(1, Tx_Pkt_size);
-	writeLCC120(1 , 0x2F0C,   0x5B);// freq915
-	writeLCC120(1 , 0x2F0D,   0x80);
-	TxCC1200_init(2, Tx_Pkt_size); 
-	writeLCC120(1 , 0x0020,   0x14);// Old Board
-	writeLCC120(1 , 0x2F0C,   0x5E);
-	writeLCC120(1 , 0x2F0D,   0x00);
-	TxCC1200_init(3, Tx_Pkt_size);
-	writeLCC120(3 , 0x2F0C,   0x5B); // freq910
-	writeLCC120(3 , 0x2F0D,   0x00);
+    for (int i=0;i<4;i++){
+    	if (ChipResetOK[i]){
+        TxCC1200_init(i, Tx_Pkt_size);// freq920
 
-    CC1200[0x100*0+4] = 4;        // switch to command mode
-    CC1200[0x100*1+4] = 4;        // switch to command mode
-    CC1200[0x100*2+4] = 4;        // switch to command mode
-    CC1200[0x100*3+4] = 4;        // switch to command mode
+    	}
+    }
+
+	if (ChipResetOK[1]){
+		writeLCC120(1 , 0x2F0C,   0x5B);// freq915
+		writeLCC120(1 , 0x2F0D,   0x80);
+	}
+	if (ChipResetOK[2]){
+		writeLCC120(2 , 0x0020,   0x14);// Old Board
+		writeLCC120(2 , 0x2F0C,   0x5E);
+		writeLCC120(2 , 0x2F0D,   0x00);
+	}
+	if (ChipResetOK[3]){
+		writeLCC120(3 , 0x2F0C,   0x5B); // freq910
+		writeLCC120(3 , 0x2F0D,   0x00);
+	}
+
     xil_printf("set chip to Tx\n\r");
-    CC1200[0x100*0+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*1+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*2+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*3+2] = 0x350000; // set chip to Tx
-    CC1200[0x100*0+0] = 1;
-    CC1200[0x100*1+0] = 1;
-    CC1200[0x100*2+0] = 1;
-    CC1200[0x100*3+0] = 1;
-	loop0 = 1;
-	loop1 = 1;
-	loop2 = 1;
-	loop3 = 1;
-	while (loop0||loop1||loop2||loop3)
-//	while (loop0||loop1||loop2)
-//	while (loop0||loop1)
-//	while (loop0)
-	{
-		loop0 = CC1200[0x100*0+1];
-		loop1 = CC1200[0x100*1+1];
-		loop2 = CC1200[0x100*2+1];
-		loop3 = CC1200[0x100*3+1];
-	};
-
-
-    CC1200[0x100*0+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*1+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*2+9] = Tx_Pkt_size; // Tx Pkt Size
-    CC1200[0x100*3+9] = Tx_Pkt_size; // Tx Pkt Size
+    for (int i=0;i<4;i++){
+    	if (ChipResetOK[1]){
+    		CC1200[0x100*i+4] = 4;        // switch to command mode
+    		CC1200[0x100*i+2] = 0x350000; // set chip to Tx
+    	    CC1200[0x100*i+0] = 1;
+    		loop = 1;
+    		while (loop)
+    		{
+    			loop = CC1200[0x100*i+1];
+    		};
+    	    CC1200[0x100*i+9] = Tx_Pkt_size; // Tx Pkt Size
+    	}
+    }
    	CC1200[0x100*0+0] = 2; // Enable Tx
    	CC1200[0x100*1+0] = 2; // Enable Tx
    	CC1200[0x100*2+0] = 2; // Enable Tx
