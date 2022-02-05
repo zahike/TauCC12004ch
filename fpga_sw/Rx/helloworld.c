@@ -137,13 +137,13 @@ while (1){
 		RForg = CC1200[0x100*i+13];
 		RFpow = RForg-81;
 		if (RFpow == -209){
-			xil_printf("Link %d Down ",i);
+			xil_printf("Link %d Down\t",i);
 		} else {
-			xil_printf("RF %d = %d DBm  ",i,RFpow);
+			xil_printf("RF %d = %d DBm\t",i,RFpow);
 		}
-	xil_printf("\t");
-	sleep (1);
 	}
+	xil_printf("\r\n");
+	sleep (1);
 }
 
 //while (1){

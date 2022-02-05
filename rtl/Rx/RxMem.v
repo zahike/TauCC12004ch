@@ -210,9 +210,16 @@ reg [11:0] DisRFpktAdd;
 always @(posedge Cclk or negedge rstn)
     if (!rstn) DisRFpktAdd <= 12'h000;
      else if (!DisRFpktOn) DisRFpktAdd <= LineNum;
-wire [2:0] ReceivedPktSum = ReceivedPkt[3]+ReceivedPkt[2]+ReceivedPkt[1]+ReceivedPkt[0]+3'b011;
-wire [7:0] GreenRF = {ReceivedPktSum,5'b11111};    
-wire [7:0] RedRF   = 8'hff-{ReceivedPktSum,5'b11111};    
+wire [2:0] ReceivedPktSum = ReceivedPkt[3]+ReceivedPkt[2]+ReceivedPkt[1]+ReceivedPkt[0];
+wire [7:0] GreenRF = (ReceivedPktSum == 3'b100) ? 8'hff :
+                     (ReceivedPktSum == 3'b011) ? 8'hdf :    
+                     (ReceivedPktSum == 3'b010) ? 8'hbf :    
+                     (ReceivedPktSum == 3'b001) ? 8'h9f : 8'h00;   
+//wire [7:0] RedRF   = 8'hff-GreenRF;    
+wire [7:0] RedRF = (ReceivedPktSum == 3'b100) ? 8'h00 :
+                   (ReceivedPktSum == 3'b011) ? 8'h40 :    
+                   (ReceivedPktSum == 3'b010) ? 8'h60 :    
+                   (ReceivedPktSum == 3'b001) ? 8'h80 : 8'hFF;   
 //wire [23:0] DisRFpktData = (Reg_Getpkt[DisRFpktAdd]) ? 24'h0000ff : 24'hff0000;     
 wire [23:0] DisRFpktData = {RedRF,8'h00,GreenRF};     
 

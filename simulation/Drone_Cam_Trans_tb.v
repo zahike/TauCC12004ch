@@ -293,7 +293,7 @@ end
     .RxValid(),//RxValid),                    // output wire RxValid;
     .Out_Off_Link(),//Out_Off_Link), //output Out_Off_Link,
     .RxFrameSync(FrameSync),                // output wire FrameSync;
-    .CS_nCounter(CS_nCounter),            // output wire [15 : 0] CS_nCounter;
+//    .CS_nCounter(CS_nCounter),            // output wire [15 : 0] CS_nCounter;
     .ShiftMISO(ShiftMISO),                // output wire [7 : 0] ShiftMISO;
     .SCLK(TxSCLK),                          // output wire SCLK;
     .MOSI(TxMOSI),                          // output wire MOSI;
@@ -361,13 +361,13 @@ CC1200SPI_Top CC1200SPI_Rx_Top_inst(
 //.RxHeader  (RxHeader),              // output        RxHeader,
 .RxAdd     (RxAdd     ),        // output [15:0] RxAdd,
 .RxAddValid(RxAddValid),        // output        RxAddValid,
-.CorThre   (CorThre),              //output [7:0]  CorThre
+//.CorThre   (CorThre),              //output [7:0]  CorThre
 .Out_Off_Link(Out_Off_Link),//output Out_Off_Link,
                   // 
 //.FrameSync(),//FrameSync),            // output FrameSync,
 //.LineSync (),//LineSync ),            // output LineSync,                                        
  
-.CS_nCounter(),                // output wire [15:0] CS_nCounter,
+//.CS_nCounter(),                // output wire [15:0] CS_nCounter,
 .ShiftMISO  (),                   // output wire [7:0] ShiftMISO,
                                         // 
 .SCLK(RxSCLK),                                   // output SCLK,
@@ -401,19 +401,34 @@ wire [15 : 0] DEWMadd;  // output wire [15 : 0] DEWMadd;
 //wire pVDE;               // input wire pVDE;
 wire [23 : 0] HDMIdata; // output wire [23 : 0] HDMIdata;
 
+initial begin 
+#2700000;
+force RxMem_inst.RxValid[0] = 1'b0;
+#400000;
+release RxMem_inst.RxValid[0];
+force RxMem_inst.RxValid[1] = 1'b0;
+#400000;
+release RxMem_inst.RxValid[1];
+force RxMem_inst.RxValid[2] = 1'b0;
+#400000;
+release RxMem_inst.RxValid[2];
+force RxMem_inst.RxValid[3] = 1'b0;
+#400000;
+release RxMem_inst.RxValid[3];
+end 
   RxMem RxMem_inst (
     .Cclk(clk),
     .rstn(rstn),
 //    .FraimSync(FrameSync),
 //    .LineSync (LineSync ),
-    .RxData(RxData),
-    .RxValid(RxValid),
+    .RxData ({4{RxData }}),
+    .RxValid({4{RxValid}}),
 //    .RxHeader(RxHeader), // input        RxHeader,    
-    .RxAdd     (RxAdd     ),
-    .RxAddValid(RxAddValid), 
+    .RxAdd     ({4{RxAdd     }}),
+    .RxAddValid({4{RxAddValid}}), 
 //    .CorThre(CorThre),  //input [7:0]  CorThre,   
     .PixelClk(PixelClk),
-    .Out_Off_Link(Out_Off_Link),  //output Out_Off_Link,
+    .Out_Off_Link({4{Out_Off_Link}}),  //output Out_Off_Link,
 //    .SCLK(RxSCLK),
 //    .MOSI(RxMOSI),
 //    .MISO(RxMISO),

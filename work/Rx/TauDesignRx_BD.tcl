@@ -307,8 +307,9 @@ proc create_root_design { parentCell } {
   set_property -dict [ list \
    CONFIG.C_ENABLE_ILA_AXI_MON {false} \
    CONFIG.C_MONITOR_TYPE {Native} \
-   CONFIG.C_NUM_OF_PROBES {9} \
+   CONFIG.C_NUM_OF_PROBES {11} \
    CONFIG.C_PROBE0_WIDTH {16} \
+   CONFIG.C_PROBE10_WIDTH {1} \
    CONFIG.C_PROBE1_WIDTH {4} \
    CONFIG.C_PROBE2_WIDTH {4} \
    CONFIG.C_PROBE3_WIDTH {4} \
@@ -786,9 +787,9 @@ proc create_root_design { parentCell } {
   connect_bd_net -net RxHDMI_0_Mem_Read [get_bd_pins RxHDMI_0/Mem_Read] [get_bd_pins RxMem_0/HMemRead]
   connect_bd_net -net RxHDMI_0_Out_pData [get_bd_pins RxHDMI_0/Out_pData] [get_bd_pins rgb2dvi_0/vid_pData]
   connect_bd_net -net RxHDMI_0_Out_pHSync [get_bd_pins RxHDMI_0/Out_pHSync] [get_bd_pins rgb2dvi_0/vid_pVSync]
-  connect_bd_net -net RxHDMI_0_Out_pVDE [get_bd_pins RxHDMI_0/Out_pVDE] [get_bd_pins RxMem_0/pVDE] [get_bd_pins rgb2dvi_0/vid_pVDE]
+  connect_bd_net -net RxHDMI_0_Out_pVDE [get_bd_pins RxHDMI_0/Out_pVDE] [get_bd_pins RxMem_0/pVDE] [get_bd_pins ila_0/probe9] [get_bd_pins rgb2dvi_0/vid_pVDE]
   connect_bd_net -net RxHDMI_0_Out_pVSync [get_bd_pins RxHDMI_0/Out_pVSync] [get_bd_pins RxMem_0/HVsync] [get_bd_pins rgb2dvi_0/vid_pHSync]
-  connect_bd_net -net RxMem_0_HDMIdata [get_bd_pins RxHDMI_0/Mem_Data] [get_bd_pins RxMem_0/HDMIdata]
+  connect_bd_net -net RxMem_0_HDMIdata [get_bd_pins RxHDMI_0/Mem_Data] [get_bd_pins RxMem_0/HDMIdata] [get_bd_pins ila_0/probe10]
   connect_bd_net -net RxSyncPic_0_PixelClk [get_bd_pins RxHDMI_0/clk] [get_bd_pins RxMem_0/PixelClk] [get_bd_pins rgb2dvi_0/PixelClk]
   connect_bd_net -net axi_apb_bridge_0_m_apb_paddr [get_bd_pins CC1200_reap_0/APB_S_0_paddr] [get_bd_pins axi_apb_bridge_0/m_apb_paddr] [get_bd_pins ila_1/probe0]
   connect_bd_net -net axi_apb_bridge_0_m_apb_penable [get_bd_pins CC1200_reap_0/APB_S_0_penable] [get_bd_pins axi_apb_bridge_0/m_apb_penable] [get_bd_pins ila_1/probe1]
