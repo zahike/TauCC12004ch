@@ -54,7 +54,7 @@
 #define START_FREQ   0x100
 #define Tx_Pkt_size 126
 #define Rx_Pkt_size 126
-#define MULTICH
+//#define MULTICH
 
 u32 *APB = XPAR_APB_M_0_BASEADDR;
 u32 *CC1200 = XPAR_APB_M_1_BASEADDR;
@@ -73,18 +73,17 @@ int readSCC120  (int Sel, int add);
 int writeLCC120 (int Sel, int add, int data);
 int readLCC120  (int Sel, int add);
 
-void TxCC1200_init(int Sel, int Pkt_size);
-void TxCC1200_initOld(int Sel, int Pkt_size);
-void TxCC1200_initNew(int Sel, int Pkt_size);
-void RxCC1200_init(int Sel, int Pkt_size);
-void RxCC1200_initOld(int Sel, int Pkt_size);
-void RxCC1200_initNew(int Sel, int Pkt_size);
+void TxCC1200_init(int Sel,int Pkt_size, int Mfreq, int Freq1, int Freq2);
+void RxCC1200_init(int Sel,int Pkt_size, int Mfreq, int Freq1, int Freq2);
 
 int main()
 {
 	int freq;
 	int Hdata,Ldata,CamID;
 	int ChipResetOK[4] = {0,0,0,0};
+	int Mfreq[4] = {0x14,0x12,0x12,0x12};
+	int Freq1[4] = {0x5A,0x5c,0x5B,0x5B};
+	int Freq2[4] = {0x00,0x00,0x80,0x00};
 	int loop;
 //	int i = 2;
     init_platform();
@@ -93,43 +92,40 @@ int main()
 
 	xil_printf("===== Set Up Transmitter =====\n\r");
     xil_printf("Reset CC1200\n\r");
-#ifdef MULTICH
     for (int i=0;i<4;i++){
-#endif
     	ChipResetOK[i] = ResetCC1200(i);
-#ifdef MULTICH
     }
-#endif
-
+//sleep(1);
     xil_printf("Configure CC1200\n\r");
-#ifdef MULTICH
     for (int i=0;i<4;i++){
-#endif
     	if (ChipResetOK[i]){
-        TxCC1200_init(i, Tx_Pkt_size);// freq920
+        TxCC1200_init(i, Tx_Pkt_size,Mfreq[i],Freq1[i],Freq2[i]);// freq920
     	}
-#ifdef MULTICH
     }
-#endif
 
-	if (ChipResetOK[1]){
-		writeLCC120(1 , 0x2F0C,   0x5B);// freq915
-		writeLCC120(1 , 0x2F0D,   0x80);
-	}
-	if (ChipResetOK[2]){
-		writeLCC120(2 , 0x0020,   0x14);// Old Board
-		writeLCC120(2 , 0x2F0C,   0x5E);
-		writeLCC120(2 , 0x2F0D,   0x00);
-	}
-	if (ChipResetOK[3]){
-		writeLCC120(3 , 0x2F0C,   0x5B); // freq910
-		writeLCC120(3 , 0x2F0D,   0x00);
-	}
+//	if (ChipResetOK[0]){
+//		writeLCC120(0 , 0x0020,   0x14);// Old Board
+//		writeLCC120(0 , 0x2F0C,   0x5E);
+//		writeLCC120(0 , 0x2F0D,   0x00);
+//	}
+//	if (ChipResetOK[1]){
+//		writeLCC120(1 , 0x2F0C,   0x5B);// freq915
+//		writeLCC120(1 , 0x2F0D,   0x80);
+//	}
+//	if (ChipResetOK[2]){
+//		writeLCC120(2 , 0x2F0C,   0x5B); // freq910
+//		writeLCC120(2 , 0x2F0D,   0x00);
+////		writeLCC120(2 , 0x0020,   0x14);// Old Board
+////		writeLCC120(2 , 0x2F0C,   0x5E);
+////		writeLCC120(2 , 0x2F0D,   0x00);
+//	}
+//	if (ChipResetOK[3]){
+//		writeLCC120(3 , 0x2F0C,   0x5B); // freq910
+//		writeLCC120(3 , 0x2F0D,   0x00);
+//	}
 
     xil_printf("set chip to Tx\n\r");
-#ifdef MULTICH
     for (int i=0;i<4;i++){
-#endif
     	if (ChipResetOK[i]){
     		CC1200[0x100*i+4] = 4;        // switch to command mode
     		CC1200[0x100*i+2] = 0x350000; // set chip to Tx
@@ -140,15 +136,13 @@ int main()
     			loop = CC1200[0x100*i+1];
     		};
     	    CC1200[0x100*i+9] = Tx_Pkt_size; // Tx Pkt Size
-    	   	CC1200[0x100*i+0] = 2; // Enable Tx
+//    	   	CC1200[0x100*i+0] = 2; // Enable Tx
     	}
-#ifdef MULTICH
     }
-#endif
-//   	CC1200[0x100*0+0] = 2; // Enable Tx
-//   	CC1200[0x100*1+0] = 2; // Enable Tx
-//   	CC1200[0x100*2+0] = 2; // Enable Tx
-//   	CC1200[0x100*3+0] = 2; // Enable Tx
+   	CC1200[0x100*0+0] = 2; // Enable Tx
+   	CC1200[0x100*1+0] = 2; // Enable Tx
+   	CC1200[0x100*2+0] = 2; // Enable Tx
+   	CC1200[0x100*3+0] = 2; // Enable Tx
 
 	xil_printf("===== Set Up Camera =====\n\r");
     APB[5] = START_FREQ; // set SCCB clock to ~200Khz
